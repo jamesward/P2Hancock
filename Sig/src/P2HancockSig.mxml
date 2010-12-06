@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					 xmlns:s="library://ns.adobe.com/flex/spark" xmlns:local="*">
+	
+	<fx:Declarations>
+		<local:P2HancockBus id="p2HancockBus">
+			<local:reset>
+				p2hd.clearDrawSurface();
+				p2HancockBus.sendResize(new Dimension(p2hd.width, p2hd.height));
+			</local:reset>
+		</local:P2HancockBus>
+	</fx:Declarations>
+	
+	<s:applicationComplete>
+		stage.setAspectRatio(StageAspectRatio.LANDSCAPE);
+		p2HancockBus.sendResize(new Dimension(p2hd.width, p2hd.height));
+	</s:applicationComplete>
+	
+	<s:layout>
+		<s:VerticalLayout paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10"/>
+	</s:layout>
+	
+	<s:Label text="Signature:"/>
+	
+	<local:P2HancockDisplay id="p2hd" width="100%" height="100%" allowInput="true">
+		<local:draw>
+			p2HancockBus.sendDraw(event.drawPath);
+			p2hd.doDraw(event.drawPath);
+		</local:draw>
+		<local:resize>
+			p2HancockBus.sendResize(new Dimension(p2hd.width, p2hd.height));
+		</local:resize>
+	</local:P2HancockDisplay>
+	
+</s:Application>

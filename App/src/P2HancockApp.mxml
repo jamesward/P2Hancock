@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:local="*"
+			   showStatusBar="false"
+			   minWidth="{p.width + 40}"
+			   minHeight="{p.height + 40}">
+	
+	<fx:Declarations>
+		<local:P2HancockBus id="p2hancockBus">
+			<local:draw>
+				p2hd.doDraw(event.drawPath);
+			</local:draw>
+			<local:resizeDrawingSurface>
+				remoteSigDim = event.dimension;
+				updateSigDim();
+			</local:resizeDrawingSurface>
+		</local:P2HancockBus>
+		<local:Dimension id="remoteSigDim"/>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+		private function updateSigDim():void
+		{
+			if ((!isNaN(remoteSigDim.width)) && (!isNaN(remoteSigDim.height)))
+			{
+				var ar:Number = remoteSigDim.height / remoteSigDim.width;
+				p2hd.height = p2hd.width * ar;
+			
+				p2hd.scaleDrawSurface(remoteSigDim.width, remoteSigDim.height);
+			}
+		}
+		]]>
+	</fx:Script>
+	
+	<s:applicationComplete>
+		p2hancockBus.sendReset();
+	</s:applicationComplete>
+	
+	<s:Panel id="p" title="Create a new Purchase Order" horizontalCenter="0" verticalCenter="0">
+		<s:Form id="f">
+			<s:FormItem label="Customer Name">
+				<s:TextInput id="customerName" width="100%"/>
+			</s:FormItem>
+			<s:FormItem label="Signature">
+				<local:P2HancockDisplay id="p2hd" width="100%" minWidth="400" minHeight="100">
+					<local:creationComplete>
+						updateSigDim();
+					</local:creationComplete>
+					<local:resize>
+						if (event.oldWidth != p2hd.width)
+						{
+							updateSigDim();
+						}
+					</local:resize>
+				</local:P2HancockDisplay>
+			</s:FormItem>
+			<s:Group width="100%">
+				<s:Button label="Save" horizontalCenter="0">
+					<s:click>
+						customerName.enabled = false;
+						p2hd.enabled = false;
+						event.currentTarget.visible = false;
+					</s:click>
+				</s:Button>
+			</s:Group>
+		</s:Form>
+	</s:Panel>
+	
+</s:WindowedApplication>
